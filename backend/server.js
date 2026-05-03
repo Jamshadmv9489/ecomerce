@@ -4,6 +4,9 @@ import cors from "cors";
 import morgan from "morgan";
 import connectDB from "./config/db.js";
 
+// Centralized error handling middleware
+import { globalErrorHandler } from './middleware/errorHandler.js'; 
+
 // Load env variables
 dotenv.config();
 
@@ -19,6 +22,8 @@ app.use(morgan("dev")); // HTTP request logger
 
 // Routes
 
+// Centralized error handler
+app.use(globalErrorHandler);
 
 // Test route
 app.get("/", (req, res) => {
