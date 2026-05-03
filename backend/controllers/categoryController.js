@@ -31,3 +31,19 @@ export const createCategory = asyncHandler(async (req, res) => {
         data: category,
     });
 });
+
+/**
+ * @desc Get All Categories
+ * @route GET /api/categories
+ */
+export const getCategories = asyncHandler(async (req, res) => {
+    // Fetch all categories from the database
+    const categories = await Category.find();
+
+    // Return success response with categories data
+    res.status(200).json({
+        success: true,
+        count: categories.length,
+        data: categories,
+    });
+});
