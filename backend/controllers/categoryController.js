@@ -47,3 +47,23 @@ export const getCategories = asyncHandler(async (req, res) => {
         data: categories,
     });
 });
+
+/**
+ * @desc Get Single Category by Slug
+ * @route GET /api/categories/:slug
+ */
+export const getCategory = asyncHandler(async (req, res) => {
+    // Find category by the slug passed in the URL
+    const category = await Category.findOne({ slug: req.params.slug });
+
+    // Throw error if category is not found
+    if (!category) {
+        throw new ErrorResponse(`Category not found with slug of ${req.params.slug}`, 404);
+    }
+
+    // Return success response with the category data
+    res.status(200).json({
+        success: true,
+        data: category,
+    });
+});

@@ -1,5 +1,5 @@
 import express from 'express';
-import { createCategory, getCategories } from '../controllers/categoryController.js'; // Logic for category controller
+import { createCategory, getCategories, getCategory } from '../controllers/categoryController.js'; // Logic for category controller
 import upload from '../middleware/uploadMiddleware.js'; // Handles single image file upload
 import { createCategoryValidator } from '../validators/categoryValidator.js'; // Rules for data validation
 import validate from '../middleware/validate.js'; // Checks validation results before moving to controller
@@ -19,5 +19,12 @@ router.post('/', upload.single('image'), createCategoryValidator, validate, crea
  */
 // Get all Categories
 router.get('/', getCategories);
+
+/**
+ * @desc Get Single Category by Slug
+ * @route GET /api/categories/:slug
+ */
+// Single Category by Slug
+router.get('/:slug', getCategory);
 
 export default router;
