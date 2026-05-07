@@ -124,3 +124,29 @@ export const updateCategory = asyncHandler(async (req, res) => {
 });
 
 
+/**
+ * @desc Delete Category
+ * @route DELETE /api/categories/:slug
+ */
+export const deleteCategory = asyncHandler(async (req, res) => {
+    // 1. Find category by slug
+    const category = await Category.findOne({ slug: req.params.slug });
+
+    if (!category) {
+        throw new ErrorResponse(`Category not found with slug of ${req.params.slug}`, 404);
+    }
+
+    // 2. Delete image from Cloudinary if it exists
+    if (category.image && category.image.public_id) {
+        await cloudinary.uploader.destroy(category.image.public_id);
+    }
+
+    // 3. Remove category from database
+    await category.deleteOne();
+
+    res.status(200).json({
+        success: true,
+        message: 'Category deleted successfully',
+        data: {}
+    });
+});
