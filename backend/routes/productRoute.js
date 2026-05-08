@@ -2,7 +2,7 @@ import express from 'express';
 import upload from '../middleware/uploadMiddleware.js'; 
 import validate from '../middleware/validate.js'; 
 import { createProductValidator } from '../validators/productValidator.js';
-import { createProduct } from '../controllers/productController.js';
+import { createProduct, getProducts } from '../controllers/productController.js';
 
 const router = express.Router();
 
@@ -21,5 +21,12 @@ router.post(
     // 4. Save the product data and file paths to the database
     createProduct
 );
+
+/**
+ * @desc Get All Products
+ * @route GET /api/products
+ */
+// Get all products
+router.get('/', getProducts);
 
 export default router;

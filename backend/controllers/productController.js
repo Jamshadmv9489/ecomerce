@@ -38,3 +38,20 @@ export const createProduct = asyncHandler(async (req, res) => {
         data: product,
     });
 });
+
+
+/**
+ * @desc Get All Products
+ * @route GET /api/products
+ */
+export const getProducts = asyncHandler(async (req, res) => {
+    // 1. Fetch all products from the database
+    const products = await Product.find();
+
+    // 2. Return success response
+    res.status(200).json({
+        success: true,
+        count: products.length,
+        data: products,
+    });
+});
