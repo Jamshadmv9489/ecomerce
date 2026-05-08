@@ -4,8 +4,10 @@ import cors from "cors";
 import morgan from "morgan";
 import connectDB from "./config/db.js";
 
+import categoryRoutes from "./routes/categoryRoute.js"; // Category API routes
+
 // Centralized error handling middleware
-import { globalErrorHandler } from './middleware/errorHandler.js'; 
+import { globalErrorHandler } from './middleware/errorHandler.js';
 
 // Load env variables
 dotenv.config();
@@ -21,6 +23,7 @@ app.use(cors()); // Enable CORS
 app.use(morgan("dev")); // HTTP request logger
 
 // Routes
+app.use('/api/categories', categoryRoutes);
 
 // Centralized error handler
 app.use(globalErrorHandler);
