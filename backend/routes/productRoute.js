@@ -2,7 +2,7 @@ import express from 'express';
 import upload from '../middleware/uploadMiddleware.js'; 
 import validate from '../middleware/validate.js'; 
 import { createProductValidator } from '../validators/productValidator.js';
-import { createProduct, getProducts } from '../controllers/productController.js';
+import { createProduct, getProductBySlug, getProducts } from '../controllers/productController.js';
 
 const router = express.Router();
 
@@ -28,5 +28,12 @@ router.post(
  */
 // Get all products
 router.get('/', getProducts);
+
+/**
+ * @desc Get Single Product by Slug
+ * @route GET /api/products/:slug
+ */
+// Get all products
+router.get('/:slug', getProductBySlug);
 
 export default router;

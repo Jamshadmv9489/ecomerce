@@ -55,3 +55,24 @@ export const getProducts = asyncHandler(async (req, res) => {
         data: products,
     });
 });
+
+/**
+ * @desc Get Single Product by Slug
+ * @route GET /api/products/:slug
+ */
+export const getProductBySlug = asyncHandler(async (req, res) => {
+    // Find product by the slug passed in the URL
+    const product = await Product.findOne({ slug: req.params.slug }).populate('category');
+
+    // Throw error if product is not found
+    if (!product) {
+        throw new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404);
+    }
+
+    // Return success response with the product data
+    res.status(200).json({
+        success: true,
+        data: product,
+    });
+});
+
