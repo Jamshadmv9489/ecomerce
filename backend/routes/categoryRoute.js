@@ -3,8 +3,12 @@ import { createCategory, deleteCategory, getCategories, getCategory, updateCateg
 import upload from '../middleware/uploadMiddleware.js'; // Handles single image file upload
 import { createCategoryValidator, updateCategoryValidator } from '../validators/categoryValidator.js'; // Rules for data validation
 import validate from '../middleware/validate.js'; // Checks validation results before moving to controller
+import createUpload from '../middleware/uploadMiddleware.js'; // Import the file upload utility based on Cloudinary and Multer
 
 const router = express.Router();
+
+// Initialize upload middleware for the 'categories' folder in Cloudinary
+const upload = createUpload("categories");
 
 /**
  * @desc Create Category
