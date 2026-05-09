@@ -2,7 +2,7 @@ import express from 'express';
 import upload from '../middleware/uploadMiddleware.js'; 
 import validate from '../middleware/validate.js'; 
 import { createProductValidator, updateProductValidator } from '../validators/productValidator.js';
-import { createProduct, getProductBySlug, getProducts, updateProduct } from '../controllers/productController.js';
+import { createProduct, deleteProduct, getProductBySlug, getProducts, updateProduct } from '../controllers/productController.js';
 
 const router = express.Router();
 
@@ -52,6 +52,18 @@ router.put(
     // 4. Update the product data and handle image replacement
     updateProduct
 );
+
+/**
+ * @desc Delete a product
+ * @route DELETE /api/products/:slug
+ */
+router.delete(
+    '/:slug', 
+    // Validation is usually not needed for deletion, 
+    // but you can add an 'admin' middleware here if needed.
+    deleteProduct
+);
+
 
 
 export default router;
