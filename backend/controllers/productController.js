@@ -135,3 +135,35 @@ export const updateProduct = asyncHandler(async (req, res) => {
 });
 
 
+/**
+ * @desc Delete Product
+ * @route DELETE /api/products/:slug
+ */
+export const deleteProduct = asyncHandler(async (req, res) => {
+    // 1. Find product by slug
+    const product = await Product.findOne({ slug: req.params.slug });
+
+    if (!product) {
+        throw new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404);
+    }
+
+    // 2. Delete all images from Cloudinary
+    if (product.images && product.images.length > 0) {
+        const deletePromises = product.images.map(img => 
+            cloudinary.uploader.destroy(img.public_id)
+        );
+        await Promise.all(deletePromises);
+    }
+
+    // 3. Remove product from database
+    await product.deleteOne();
+
+    res.status(200).json({
+        success: true,
+        message: 'Product deleted successfully',
+        data: {}
+    });
+});
+
+
+
