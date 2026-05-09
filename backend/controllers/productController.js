@@ -1,6 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import Product from "../models/Product.js";
 import ErrorResponse from "../utils/errorResponse.js";
+import cloudinary from "../config/cloudinary.js";
 
 /**
  * @desc Create Product
@@ -75,4 +76,62 @@ export const getProductBySlug = asyncHandler(async (req, res) => {
         data: product,
     });
 });
+
+
+/**
+ * @desc Update Product
+ * @route PUT /api/products/:slug
+ */
+export const updateProduct = asyncHandler(async (req, res) => {
+    const { name, description, price, category, stock, isActive } = req.body;
+
+    // Find product by slug
+    const product = await Product.findOne({ slug: req.params.slug });
+
+    if (!product) {
+        throw new ErrorResponse(`Product not found with slug of ${req.params.slug}`, 404);
+    }
+
+    // 1. Check if name is changed and if new name already exists
+    if (name && name !== product.name) {
+        const nameExists = await Product.findOne({ name });
+        if (nameExists) {
+            throw new ErrorResponse('Product name already exists', 400);
+        }
+        product.name = name;
+    }
+
+    // 2. Update simple fields if they are provided
+    if (description) product.description = description;
+    if (price) product.price = price;
+    if (category) product.category = category;
+    if (stock !== undefined) product.stock = stock;
+    if (isActive !== undefined) product.isActive = isActive;
+
+    // 3. Handle multiple image uploads
+    if (req.files && req.files.length > 0) {
+        // Delete old images from Cloudinary
+        if (product.images && product.images.length > 0) {
+            const deletePromises = product.images.map(img => 
+                cloudinary.uploader.destroy(img.public_id)
+            );
+            await Promise.all(deletePromises);
+        }
+
+        // Set new images array
+        product.images = req.files.map(file => ({
+            url: file.path || file.secure_url,
+            public_id: file.filename || file.public_id,
+        }));
+    }
+
+    // 4. Save changes (triggers pre-save hooks for slug updates)
+    await product.save();
+
+    res.status(200).json({
+        success: true,
+        data: product,
+    });
+});
+
 
