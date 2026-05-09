@@ -1,8 +1,8 @@
 import express from 'express';
 import upload from '../middleware/uploadMiddleware.js'; 
 import validate from '../middleware/validate.js'; 
-import { createProductValidator } from '../validators/productValidator.js';
-import { createProduct, getProductBySlug, getProducts } from '../controllers/productController.js';
+import { createProductValidator, updateProductValidator } from '../validators/productValidator.js';
+import { createProduct, getProductBySlug, getProducts, updateProduct } from '../controllers/productController.js';
 
 const router = express.Router();
 
@@ -35,5 +35,23 @@ router.get('/', getProducts);
  */
 // Get all products
 router.get('/:slug', getProductBySlug);
+
+
+/**
+ * @desc Update an existing product
+ * @route PUT /api/products/:slug
+ */
+router.put(
+    '/:slug', 
+    // 1. Process up to 5 uploaded images (if any are provided for the update)
+    upload.array('images', 5), 
+    // 2. Run rules for updating fields (all fields are optional)
+    updateProductValidator,
+    // 3. Catch any validation errors
+    validate,
+    // 4. Update the product data and handle image replacement
+    updateProduct
+);
+
 
 export default router;

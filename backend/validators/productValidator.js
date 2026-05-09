@@ -44,3 +44,49 @@ export const createProductValidator = [
         .isBoolean()
         .withMessage("isActive must be a boolean value"), // Ensures true/false value
 ];
+
+
+/**
+ * Validation rules for updating an existing product
+ */
+export const updateProductValidator = [
+    body("name")
+        .optional()
+        .notEmpty()
+        .withMessage("Product name cannot be empty")
+        .isString()
+        .withMessage("Name must be a string")
+        .trim(), // Clean whitespace
+
+    body("description")
+        .optional()
+        .notEmpty()
+        .withMessage("Product description cannot be empty")
+        .isString()
+        .withMessage("Description must be a string")
+        .trim(),
+
+    body("price")
+        .optional()
+        .isNumeric()
+        .withMessage("Price must be a number")
+        .custom((value) => value >= 0)
+        .withMessage("Price cannot be negative"), // No negative prices
+
+    body("category")
+        .optional()
+        .isMongoId()
+        .withMessage("Invalid category ID format"), // Check MongoDB ID
+
+    body("stock")
+        .optional()
+        .isNumeric()
+        .withMessage("Stock must be a number")
+        .custom((value) => value >= 0)
+        .withMessage("Stock cannot be negative"), // No negative stock
+
+    body("isActive")
+        .optional()
+        .isBoolean()
+        .withMessage("isActive must be a boolean value"), // true/false only
+];
