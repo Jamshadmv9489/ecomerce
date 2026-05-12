@@ -1,6 +1,6 @@
 import express from 'express';
+import createUpload from '../middleware/uploadMiddleware.js'; // Import the file upload utility based on Cloudinary and Multer
 import { createCategory, deleteCategory, getCategories, getCategory, updateCategory } from '../controllers/categoryController.js'; // Logic for category controller
-import upload from '../middleware/uploadMiddleware.js'; // Handles single image file upload
 import { createCategoryValidator, updateCategoryValidator } from '../validators/categoryValidator.js'; // Rules for data validation
 import validate from '../middleware/validate.js'; // Checks validation results before moving to controller
 import createUpload from '../middleware/uploadMiddleware.js'; // Import the file upload utility based on Cloudinary and Multer
