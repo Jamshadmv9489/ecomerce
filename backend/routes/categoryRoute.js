@@ -3,7 +3,6 @@ import createUpload from '../middleware/uploadMiddleware.js'; // Import the file
 import { createCategory, deleteCategory, getCategories, getCategory, updateCategory } from '../controllers/categoryController.js'; // Logic for category controller
 import { createCategoryValidator, updateCategoryValidator } from '../validators/categoryValidator.js'; // Rules for data validation
 import validate from '../middleware/validate.js'; // Checks validation results before moving to controller
-import createUpload from '../middleware/uploadMiddleware.js'; // Import the file upload utility based on Cloudinary and Multer
 
 const router = express.Router();
 
