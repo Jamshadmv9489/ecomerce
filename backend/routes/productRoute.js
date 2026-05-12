@@ -1,10 +1,14 @@
 import express from 'express';
-import upload from '../middleware/uploadMiddleware.js'; 
+import createUpload from '../middleware/uploadMiddleware.js'; 
 import validate from '../middleware/validate.js'; 
 import { createProductValidator, updateProductValidator } from '../validators/productValidator.js';
 import { createProduct, deleteProduct, getProductBySlug, getProducts, updateProduct } from '../controllers/productController.js';
 
 const router = express.Router();
+
+// Initialize upload middleware for the 'products' folder in Cloudinary
+const upload = createUpload("products");
+
 
 /**
  * @desc Create a new product
@@ -63,7 +67,5 @@ router.delete(
     // but you can add an 'admin' middleware here if needed.
     deleteProduct
 );
-
-
 
 export default router;
