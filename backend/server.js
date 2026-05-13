@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 
 import categoryRoutes from "./routes/categoryRoute.js"; // Category API routes
 import productRoutes from "./routes/productRoute.js"; // Product API routes
+import authRoutes from "./routes/authRoute.js"; // Auth API routes
 
 // Centralized error handling middleware
 import { globalErrorHandler } from './middleware/errorHandler.js';
@@ -26,6 +27,7 @@ app.use(morgan("dev")); // HTTP request logger
 // Routes
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/auth', authRoutes);
 
 // Centralized error handler
 app.use(globalErrorHandler);
