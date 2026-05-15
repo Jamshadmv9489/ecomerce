@@ -2,6 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
+
 import connectDB from "./config/db.js";
 
 import categoryRoutes from "./routes/categoryRoute.js"; // Category API routes
@@ -23,6 +25,7 @@ const app = express();
 app.use(express.json()); // Parse JSON
 app.use(cors()); // Enable CORS
 app.use(morgan("dev")); // HTTP request logger
+app.use(cookieParser()); // Parse incoming cookies and populate req.cookies
 
 // Routes
 app.use('/api/categories', categoryRoutes);

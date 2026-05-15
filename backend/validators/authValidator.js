@@ -26,3 +26,22 @@ export const registerValidator = [
         .isLength({ min: 6 })
         .withMessage("Password must be at least 6 characters"),
 ];
+
+
+/**
+ * @desc Validation rules for User Login
+ */
+export const loginValidator = [
+    body("email")
+        .trim()
+        .notEmpty()
+        .withMessage("Email address is required")
+        .isEmail()
+        .withMessage("Please fill a valid email address")
+        .normalizeEmail(),
+
+    body("password")
+        .trim()
+        .notEmpty()
+        .withMessage("Password is required"),
+];

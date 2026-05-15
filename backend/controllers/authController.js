@@ -2,6 +2,8 @@ import crypto from "crypto";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import User from "../models/User.js"; // Adjust path as per your directory structure
 import ErrorResponse from "../utils/errorResponse.js";
+import generateToken from "../utils/generateToken.js";
+import { cookieOptions } from "../config/cookieConfig.js";
 
 /**
  * @desc Register User
@@ -18,7 +20,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     // 2. Extract clean username prefix from email (e.g., 'john' from 'john.doe@gmail.com')
     const emailPrefix = email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "");
-    
+
     // 3. Append a secure 4-digit random number to guarantee absolute uniqueness
     const randomBits = crypto.randomInt(1000, 9999);
     const generatedUsername = `${emailPrefix}${randomBits}`;
@@ -43,4 +45,43 @@ export const registerUser = asyncHandler(async (req, res) => {
             role: user.role,
         },
     });
+});
+
+
+/**
+ * @desc Auth User & Get Token (Login)
+ * @route POST /api/auth/login
+ */
+export const loginUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+
+    // Retrieve the hidden password field using select("+password")
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) {
+        throw new ErrorResponse("Invalid credentials", 401);
+    }
+
+    // Verify if the provided password matches the hashed password
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+        throw new ErrorResponse("Invalid credentials", 401);
+    }
+
+    // Generate the authentication token using the utility function
+    const token = generateToken(user);
+
+    // Set the cookie in the response header and send user data without exposing the token in the body
+    res.status(200)
+       .cookie("token", token, cookieOptions) 
+       .json({
+            success: true,
+            message: "User logged in successfully",
+            data: {
+                _id: user._id,
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            },
+       });
 });

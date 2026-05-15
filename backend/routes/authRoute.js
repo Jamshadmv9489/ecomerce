@@ -1,7 +1,7 @@
 import express from 'express';
 import validate from '../middleware/validate.js'; 
-import { registerValidator } from '../validators/authValidator.js';
-import { registerUser } from '../controllers/authController.js';
+import { loginValidator, registerValidator } from '../validators/authValidator.js';
+import { loginUser, registerUser } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -18,5 +18,11 @@ router.post(
     // 3. Process database creation using automated username extraction
     registerUser
 );
+
+/**
+ * @desc User Login
+ * @route POST /api/auth/login
+ */
+router.post('/login', loginValidator, validate, loginUser);
 
 export default router;
