@@ -85,3 +85,26 @@ export const loginUser = asyncHandler(async (req, res) => {
             },
        });
 });
+
+/**
+ * @desc Log User Out / Clear Cookie
+ * @route POST /api/auth/logout
+ */
+export const logoutUser = asyncHandler(async (req, res, next) => {
+    // Copy base cookie configuration settings
+    const logoutOptions = { ...cookieOptions };
+
+    // Remove active age duration property
+    delete logoutOptions.maxAge; 
+
+    // Clear client cookie container immediately
+    res.status(200)
+       .cookie("token", "", {
+           ...logoutOptions,
+           expires: new Date(0) // Wipe session token instantly
+       })
+       .json({
+            success: true,
+            message: "User logged out successfully"
+       });
+});

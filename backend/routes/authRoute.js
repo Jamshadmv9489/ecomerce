@@ -1,7 +1,8 @@
 import express from 'express';
-import validate from '../middleware/validate.js'; 
+import validate from '../middleware/validate.js';
 import { loginValidator, registerValidator } from '../validators/authValidator.js';
-import { loginUser, registerUser } from '../controllers/authController.js';
+import { loginUser, logoutUser, registerUser } from '../controllers/authController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ const router = express.Router();
  * @route POST /api/auth/register
  */
 router.post(
-    '/register', 
+    '/register',
     // 1. Run express-validator rules to ensure clean request inputs
     registerValidator,
     // 2. Catch and stop execution if validation rules fail
@@ -24,5 +25,12 @@ router.post(
  * @route POST /api/auth/login
  */
 router.post('/login', loginValidator, validate, loginUser);
+
+/**
+ * @desc    Log User Out / Clear Cookie
+ * @route   POST /api/auth/logout
+ * @access  Public (Does not require an active session token)
+ */
+router.post('/logout', logoutUser);
 
 export default router;
