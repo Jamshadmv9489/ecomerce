@@ -1,7 +1,7 @@
 import express from 'express';
 import validate from '../middleware/validate.js';
 import { loginValidator, registerValidator } from '../validators/authValidator.js';
-import { loginUser, logoutUser, registerUser } from '../controllers/authController.js';
+import { checkAuth, loginUser, logoutUser, registerUser } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -32,5 +32,11 @@ router.post('/login', loginValidator, validate, loginUser);
  * @access  Public (Does not require an active session token)
  */
 router.post('/logout', logoutUser);
+
+/**
+ * @desc    Get current logged-in user profile
+ * @route   GET /api/auth/me
+ * @access  Private
+ */router.get('/me', protect, checkAuth);
 
 export default router;

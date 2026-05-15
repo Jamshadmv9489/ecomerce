@@ -108,3 +108,17 @@ export const logoutUser = asyncHandler(async (req, res, next) => {
             message: "User logged out successfully"
        });
 });
+
+/**
+ * @desc    Get current logged-in user profile
+ * @route   GET /api/auth/me
+ * @access  Private
+ */
+export const checkAuth = asyncHandler(async (req, res, next) => {
+    // req.user is already fetched from DB by protect middleware
+    res.status(200).json({
+        success: true,
+        data: req.user
+    });
+});
+
