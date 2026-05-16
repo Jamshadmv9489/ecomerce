@@ -2,10 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
+
 import connectDB from "./config/db.js";
 
 import categoryRoutes from "./routes/categoryRoute.js"; // Category API routes
 import productRoutes from "./routes/productRoute.js"; // Product API routes
+import authRoutes from "./routes/authRoute.js"; // Auth API routes
 
 // Centralized error handling middleware
 import { globalErrorHandler } from './middleware/errorHandler.js';
@@ -22,10 +25,12 @@ const app = express();
 app.use(express.json()); // Parse JSON
 app.use(cors()); // Enable CORS
 app.use(morgan("dev")); // HTTP request logger
+app.use(cookieParser()); // Parse incoming cookies and populate req.cookies
 
 // Routes
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/auth', authRoutes);
 
 // Centralized error handler
 app.use(globalErrorHandler);
