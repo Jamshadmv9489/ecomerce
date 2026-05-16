@@ -1,7 +1,7 @@
 import express from 'express';
 import validate from '../middleware/validate.js';
-import { loginValidator, registerValidator } from '../validators/authValidator.js';
-import { checkAuth, loginUser, logoutUser, registerUser } from '../controllers/authController.js';
+import { loginValidator, registerValidator, updatePasswordValidator, updateValidator } from '../validators/authValidator.js';
+import { checkAuth, loginUser, logoutUser, registerUser, updatePassword, updateUser } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -38,5 +38,20 @@ router.post('/logout', logoutUser);
  * @route   GET /api/auth/me
  * @access  Private
  */router.get('/me', protect, checkAuth);
+
+/**
+ * @desc    Update User Profile
+ * @route   PUT /api/auth/update
+ * @access  Private
+ */
+router.put('/update', protect, updateValidator, validate, updateUser);
+
+/**
+ * @desc    Update Password
+ * @route   PUT /api/auth/updatepassword
+ * @access  Private
+ */
+router.put('/update-password', protect, updatePasswordValidator, validate, updatePassword);
+
 
 export default router;

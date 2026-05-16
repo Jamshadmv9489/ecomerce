@@ -72,8 +72,8 @@ export const loginUser = asyncHandler(async (req, res) => {
 
     // Set the cookie in the response header and send user data without exposing the token in the body
     res.status(200)
-       .cookie("token", token, cookieOptions) 
-       .json({
+        .cookie("token", token, cookieOptions)
+        .json({
             success: true,
             message: "User logged in successfully",
             data: {
@@ -83,7 +83,7 @@ export const loginUser = asyncHandler(async (req, res) => {
                 email: user.email,
                 role: user.role
             },
-       });
+        });
 });
 
 /**
@@ -95,18 +95,18 @@ export const logoutUser = asyncHandler(async (req, res, next) => {
     const logoutOptions = { ...cookieOptions };
 
     // Remove active age duration property
-    delete logoutOptions.maxAge; 
+    delete logoutOptions.maxAge;
 
     // Clear client cookie container immediately
     res.status(200)
-       .cookie("token", "", {
-           ...logoutOptions,
-           expires: new Date(0) // Wipe session token instantly
-       })
-       .json({
+        .cookie("token", "", {
+            ...logoutOptions,
+            expires: new Date(0) // Wipe session token instantly
+        })
+        .json({
             success: true,
             message: "User logged out successfully"
-       });
+        });
 });
 
 /**
@@ -121,4 +121,79 @@ export const checkAuth = asyncHandler(async (req, res, next) => {
         data: req.user
     });
 });
+
+
+/**
+ * @desc Update User Profile
+ * @route PUT /api/auth/update
+ * @access  Private
+ */
+export const updateUser = asyncHandler(async (req, res) => {
+    const { name, email } = req.body;
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+        throw new ErrorResponse("User not found", 404);
+    }
+
+    if (email && email !== user.email) {
+        const emailExists = await User.findOne({ email });
+        if (emailExists) {
+            throw new ErrorResponse("Email is already taken", 400);
+        }
+        user.email = email;
+    }
+
+    if (name) user.name = name;
+
+    const updatedUser = await user.save();
+    const token = generateToken(updatedUser);
+
+    res.status(200)
+        .cookie("token", token, cookieOptions)
+        .json({
+            success: true,
+            message: "User profile updated successfully",
+            data: {
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                username: updatedUser.username,
+                email: updatedUser.email,
+                role: updatedUser.role,
+            },
+        });
+});
+
+
+/**
+ * @desc    Update Password
+ * @route   PUT /api/auth/updatepassword
+ * @access  Private
+ */
+export const updatePassword = asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+
+    // 1. Get user from database with password field
+    const user = await User.findById(req.user._id).select("+password");
+
+    // 2. Check if current password matches
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+        throw new ErrorResponse("Current password is incorrect", 401);
+    }
+
+    // 3. Set new password
+    user.password = newPassword;
+    await user.save();
+
+    // 4. Generate new token and send response
+    const token = generateToken(user);
+    res.status(200)
+        .cookie("token", token, cookieOptions)
+        .json({
+            success: true,
+            message: "Password updated successfully"
+        });
+});
+
 
