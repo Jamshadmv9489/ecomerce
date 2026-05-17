@@ -38,7 +38,7 @@ export const addToCart = asyncHandler(async (req, res) => {
         if (itemIndex > -1) {
             // Product already exists: increment quantity and refresh database price
             cart.items[itemIndex].quantity += qty;
-            cart.items[itemIndex].price = price; 
+            cart.items[itemIndex].price = price;
         } else {
             // Product does not exist: push new product entry to items array
             cart.items.push({ product: productId, quantity: qty, price });
@@ -87,6 +87,36 @@ export const getCart = asyncHandler(async (req, res) => {
     // 3. Return cart (totalPrice and totalItems are calculated automatically)
     res.status(200).json({
         success: true,
+        data: cart
+    });
+});
+
+
+/**
+ * @desc    Remove an item from cart completely
+ * @route   DELETE /api/cart/:productId
+ * @access  Private
+ */
+export const removeFromCart = asyncHandler(async (req, res) => {
+    const { productId } = req.params;
+    const userId = req.user._id;
+
+    // 1. Find user's cart and remove the product matching the ID from the items array
+    const cart = await Cart.findOneAndUpdate(
+        { user: userId },
+        { $pull: { items: { product: productId } } },
+        { returnDocument: 'after' } // Returns the updated document after deletion
+    ).populate("items.product", "name price images image slug");
+
+    // 2. If the user doesn't have an active cart container, stop execution
+    if (!cart) {
+        throw new ErrorResponse("Cart not found", 404);
+    }
+
+    // 3. Return the updated cart structure with recalculated totals
+    res.status(200).json({
+        success: true,
+        message: "Item removed from cart successfully",
         data: cart
     });
 });
