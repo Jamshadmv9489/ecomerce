@@ -120,3 +120,66 @@ export const removeFromCart = asyncHandler(async (req, res) => {
         data: cart
     });
 });
+
+
+/**
+ * @desc    Update specific item quantity in cart
+ * @route   PUT /api/cart/update-quantity
+ * @access  Private
+ */
+export const updateCartQuantity = asyncHandler(async (req, res) => {
+    const { productId, quantity } = req.body;
+    const userId = req.user._id;
+
+    const targetQuantity = Number(quantity);
+
+    // 1. If quantity is set to 0 or less, completely remove the item from the cart
+    if (targetQuantity <= 0) {
+        const cart = await Cart.findOneAndUpdate(
+            { user: userId },
+            { $pull: { items: { product: productId } } },
+            { returnDocument: 'after' }
+        ).populate("items.product", "name price images image slug");
+
+        if (!cart) throw new ErrorResponse("Cart not found", 404);
+
+        return res.status(200).json({
+            success: true,
+            message: "Item removed from cart due to zero quantity",
+            data: cart
+        });
+    }
+
+    // 2. Fetch fresh price from database to safeguard against price manipulation
+    const product = await Product.findById(productId);
+    if (!product) {
+        throw new ErrorResponse("Product not found", 404);
+    }
+
+    // 3. Find the user's cart
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) {
+        throw new ErrorResponse("Cart not found", 404);
+    }
+
+    // 4. Find the item index in the cart array
+    const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
+    if (itemIndex === -1) {
+        throw new ErrorResponse("Item not found in cart", 404);
+    }
+
+    // 5. Update the row with the new clean quantity and refresh database price
+    cart.items[itemIndex].quantity = targetQuantity;
+    cart.items[itemIndex].price = product.price;
+
+    // 6. Save structural updates and populate product metadata for the frontend
+    await cart.save();
+    const populatedCart = await cart.populate("items.product", "name price images image slug");
+
+    res.status(200).json({
+        success: true,
+        message: "Cart quantity updated successfully",
+        data: populatedCart
+    });
+});
+

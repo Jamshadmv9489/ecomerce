@@ -27,3 +27,23 @@ export const productIdParamValidator = [
         .isMongoId()
         .withMessage('Please supply a valid product identifier format'),
 ];
+
+
+/**
+ * @desc Validation rules for checking Cart quantity updates
+ */
+export const updateQuantityValidator = [
+    body('productId')
+        .trim()
+        .notEmpty()
+        .withMessage('Product ID is required')
+        .isMongoId()
+        .withMessage('Please supply a valid product identifier format'),
+
+    body('quantity')
+        .trim()
+        .notEmpty()
+        .withMessage('Quantity is required')
+        .isInt({ min: 0 })
+        .withMessage('Quantity must be an integer of 0 or greater'),
+];

@@ -1,8 +1,8 @@
 import express from 'express';
 import validate from '../middleware/validate.js';
 import { protect } from '../middleware/authMiddleware.js';
-import { cartItemValidator, productIdParamValidator } from '../validators/cartItemValidator.js';
-import { addToCart, getCart, removeFromCart } from '../controllers/cartController.js';
+import { cartItemValidator, productIdParamValidator, updateQuantityValidator } from '../validators/cartItemValidator.js';
+import { addToCart, getCart, removeFromCart, updateCartQuantity } from '../controllers/cartController.js';
 
 const router = express.Router();
 
@@ -32,5 +32,12 @@ router.get('/', protect, getCart);
  * @access  Private
  */
 router.delete('/:productId', protect, productIdParamValidator, validate, removeFromCart);
+
+/**
+ * @desc    Update specific item quantity in cart
+ * @route   PUT /api/cart/update-quantity
+ * @access  Private
+ */
+router.put('/update-quantity', protect, updateQuantityValidator, validate, updateCartQuantity);
 
 export default router;
