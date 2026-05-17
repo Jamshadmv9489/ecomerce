@@ -9,6 +9,7 @@ import connectDB from "./config/db.js";
 import categoryRoutes from "./routes/categoryRoute.js"; // Category API routes
 import productRoutes from "./routes/productRoute.js"; // Product API routes
 import authRoutes from "./routes/authRoute.js"; // Auth API routes
+import cartRoutes from './routes/cartRoute.js' // Cart API routes
 
 // Centralized error handling middleware
 import { globalErrorHandler } from './middleware/errorHandler.js';
@@ -31,6 +32,7 @@ app.use(cookieParser()); // Parse incoming cookies and populate req.cookies
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/cart', cartRoutes);
 
 // Centralized error handler
 app.use(globalErrorHandler);
