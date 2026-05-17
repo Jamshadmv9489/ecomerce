@@ -57,3 +57,36 @@ export const addToCart = asyncHandler(async (req, res) => {
         data: populatedCart
     });
 });
+
+
+/**
+ * @desc    Get logged-in user's cart
+ * @route   GET /api/cart
+ * @access  Private
+ */
+export const getCart = asyncHandler(async (req, res) => {
+    // 1. Fetch user's cart and populate product details
+    const cart = await Cart.findOne({ user: req.user._id }).populate(
+        "items.product",
+        "name price images image slug"
+    );
+
+    // 2. If no cart exists, return a standard empty cart object instead of null
+    if (!cart) {
+        return res.status(200).json({
+            success: true,
+            data: {
+                user: req.user._id,
+                items: [],
+                totalPrice: 0,
+                totalItems: 0
+            }
+        });
+    }
+
+    // 3. Return cart (totalPrice and totalItems are calculated automatically)
+    res.status(200).json({
+        success: true,
+        data: cart
+    });
+});
