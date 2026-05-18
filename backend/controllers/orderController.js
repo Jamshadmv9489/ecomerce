@@ -117,4 +117,30 @@ export const getMyOrders = asyncHandler(async (req, res) => {
 });
 
 
+/**
+ * @desc    Get Order By ID
+ * @route   GET /api/order/:orderId
+ * @access  Private
+ */
+export const getOrderById = asyncHandler(async (req, res) => {
+    // 1. Fetch single order, link buyer details, and populate product metadata
+    const order = await Order.findById(req.params.orderId)
+        .populate("user", "name email")
+        .populate("items.product", "name images image price slug");
 
+    // 2. Return error if order matching the dynamic ID is missing
+    if (!order) {
+        throw new ErrorResponse("Order not found", 404);
+    }
+
+    // 3. Safeguard resource: ensure logged-in requester is the order owner or an admin
+    if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== "admin") {
+        throw new ErrorResponse("Not authorized to view this order", 401);
+    }
+
+    // 4. Return the complete populated order payload
+    res.status(200).json({
+        success: true,
+        data: order,
+    });
+});

@@ -4,7 +4,8 @@ import { createOrderValidator } from '../validators/orderValidator.js';
 import validate from '../middleware/validate.js';
 import { 
     createOrder,
-    getMyOrders
+    getMyOrders,
+    getOrderById
 } from '../controllers/orderController.js';
 
 const router = express.Router();
@@ -29,5 +30,11 @@ router.post(
  */
 router.get('/myorders', protect, getMyOrders);
 
+/**
+ * @desc    Get Logged-In User Orders (Order History)
+ * @route   GET /api/order/:orderId
+ * @access  Private
+ */
+router.get('/:orderId', protect, getOrderById);
 
 export default router;
