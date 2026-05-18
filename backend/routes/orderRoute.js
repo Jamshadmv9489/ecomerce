@@ -3,7 +3,8 @@ import { protect } from '../middleware/authMiddleware.js';
 import { createOrderValidator } from '../validators/orderValidator.js';
 import validate from '../middleware/validate.js';
 import { 
-    createOrder
+    createOrder,
+    getMyOrders
 } from '../controllers/orderController.js';
 
 const router = express.Router();
@@ -20,5 +21,13 @@ router.post(
     validate,
     createOrder
 );
+
+/**
+ * @desc    Get Logged-In User Orders (Order History)
+ * @route   GET /api/order/myorders
+ * @access  Private
+ */
+router.get('/myorders', protect, getMyOrders);
+
 
 export default router;

@@ -87,3 +87,34 @@ export const createOrder = asyncHandler(async (req, res) => {
     });
 });
 
+
+/**
+ * @desc    Get Logged-In User Orders (Order History)
+ * @route   GET /api/order/myorders
+ * @access  Private
+ */
+export const getMyOrders = asyncHandler(async (req, res) => {
+    // 1. Fetch user's orders, populate product metadata, and sort by newest first
+    const orders = await Order.find({ user: req.user._id })
+        .populate("items.product", "name images image price")
+        .sort({ createdAt: -1 });
+
+    // 2. Return standard empty container if no orders exist
+    if (!orders || orders.length === 0) {
+        return res.status(200).json({
+            success: true,
+            count: 0,
+            data: [],
+        });
+    }
+
+    // 3. Return the list of orders with count details
+    res.status(200).json({
+        success: true,
+        count: orders.length,
+        data: orders,
+    });
+});
+
+
+
