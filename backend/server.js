@@ -11,6 +11,7 @@ import productRoutes from "./routes/productRoute.js"; // Product API routes
 import authRoutes from "./routes/authRoute.js"; // Auth API routes
 import cartRoutes from './routes/cartRoute.js' // Cart API routes
 import orderRoutes from './routes/orderRoute.js' // Order API routes
+import paymentRoutes from './routes/paymentRoute.js' // Payment API routes
 
 // Centralized error handling middleware
 import { globalErrorHandler } from './middleware/errorHandler.js';
@@ -35,6 +36,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/order', orderRoutes);
+app.use('/api/payment', paymentRoutes);
 
 // Centralized error handler
 app.use(globalErrorHandler);
