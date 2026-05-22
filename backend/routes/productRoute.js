@@ -1,4 +1,5 @@
 import express from 'express';
+import { isAdmin, protect } from '../middleware/authMiddleware.js';
 import createUpload from '../middleware/uploadMiddleware.js'; 
 import validate from '../middleware/validate.js'; 
 import { createProductValidator, updateProductValidator } from '../validators/productValidator.js';
@@ -16,6 +17,8 @@ const upload = createUpload("products");
  */
 router.post(
     '/', 
+    protect,
+    isAdmin,
     // 1. Process up to 5 uploaded images from the 'images' field
     upload.array('images', 5), 
     // 2. Run rules to check if text fields (name, price, etc.) are valid
@@ -47,6 +50,8 @@ router.get('/:slug', getProductBySlug);
  */
 router.put(
     '/:slug', 
+    protect,
+    isAdmin,
     // 1. Process up to 5 uploaded images (if any are provided for the update)
     upload.array('images', 5), 
     // 2. Run rules for updating fields (all fields are optional)
@@ -63,6 +68,8 @@ router.put(
  */
 router.delete(
     '/:slug', 
+    protect,
+    isAdmin,
     // Validation is usually not needed for deletion, 
     // but you can add an 'admin' middleware here if needed.
     deleteProduct
