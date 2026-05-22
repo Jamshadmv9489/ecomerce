@@ -1,4 +1,5 @@
 import express from 'express';
+import { isAdmin, protect } from '../middleware/authMiddleware.js';
 import createUpload from '../middleware/uploadMiddleware.js'; // Import the file upload utility based on Cloudinary and Multer
 import { createCategory, deleteCategory, getCategories, getCategory, updateCategory } from '../controllers/categoryController.js'; // Logic for category controller
 import { createCategoryValidator, updateCategoryValidator } from '../validators/categoryValidator.js'; // Rules for data validation
@@ -14,7 +15,7 @@ const upload = createUpload("categories");
  * @route POST /api/categories
  */
 // Handle file upload, validate input, check for errors, then create category
-router.post('/', upload.single('image'), createCategoryValidator, validate, createCategory);
+router.post('/', protect, isAdmin, upload.single('image'), createCategoryValidator, validate, createCategory);
 
 /**
  * @desc Get All Categories
@@ -35,13 +36,13 @@ router.get('/:slug', getCategory);
  * @route PUT /api/categories/:slug
  */
 // Update Category by slug
-router.put('/:slug', upload.single('image'), updateCategoryValidator, validate, updateCategory);
+router.put('/:slug', protect, isAdmin, upload.single('image'), updateCategoryValidator, validate, updateCategory);
 
 /**
  * @desc Delete Category
  * @route DELETE /api/categories/:slug
  */
 // Delete Category by slug
-router.delete('/:slug', deleteCategory);
+router.delete('/:slug', protect, isAdmin, deleteCategory);
 
 export default router;
