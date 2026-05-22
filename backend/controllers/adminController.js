@@ -109,4 +109,41 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
 });
 
 
+/**
+ * @desc    Get All Users with Pagination and Sorting
+ * @route   GET /api/admin/users
+ * @access  Private/Admin
+ */
+export const getAllUsers = asyncHandler(async (req, res) => {
+    // Get page and limit numbers from query, set defaults if empty
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    // Filter to get only customers, excluding admin accounts
+    const filter = { role: "customer" };
+
+    // Get total number of users for frontend pagination logic
+    const totalUsers = await User.countDocuments(filter);
+
+    // Fetch users (excluding password, sorted by newest first, with pagination)
+    const users = await User.find(filter)
+        .select("-password")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+    res.status(200).json({
+        success: true,
+        count: users.length,
+        total: totalUsers,
+        currentPage: page,
+        totalPages: Math.ceil(totalUsers / limit),
+        data: users
+    });
+});
+
+
+
 

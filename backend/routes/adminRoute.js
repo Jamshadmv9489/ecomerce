@@ -1,6 +1,6 @@
 import express from 'express';
 import { protect, isAdmin } from '../middleware/authMiddleware.js';
-import { getAllOrders, getAnalytics, updateOrderStatus } from '../controllers/adminController.js';
+import { getAllOrders, getAllUsers, getAnalytics, updateOrderStatus } from '../controllers/adminController.js';
 
 const router = express.Router();
 
@@ -31,5 +31,12 @@ router.get('/orders', getAllOrders);
  * @access  Private/Admin
  */
 router.put('/orders/:id/status', updateOrderStatus);
+
+/**
+ * @desc    Get All Users with Pagination and Sorting
+ * @route   GET /api/admin/users
+ * @access  Private/Admin
+ */
+router.get('/users', getAllUsers);
 
 export default router;
