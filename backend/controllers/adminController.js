@@ -38,3 +38,75 @@ export const getAnalytics = asyncHandler(async (req, res) => {
         }
     });
 });
+
+/**
+ * @desc    Get All Orders
+ * @route   GET /api/admin/orders
+ * @access  Private/Admin
+ */
+export const getAllOrders = asyncHandler(async (req, res) => {
+    // .lean() improves performance for read-only queries
+    const orders = await Order.find({})
+        .populate("user", "id name email")
+        .sort({ createdAt: -1 })
+        .lean();
+
+    res.status(200).json({
+        success: true,
+        count: orders.length,
+        data: orders
+    });
+});
+
+
+/**
+ * @desc    Update Order Status
+ * @route   PUT /api/admin/orders/:id/status
+ * @access  Private/Admin
+ */
+export const updateOrderStatus = asyncHandler(async (req, res) => {
+    const { status } = req.body;
+
+    // Validate request body
+    const allowedStatuses = ["Shipped", "Delivered", "Cancelled"];
+    if (!allowedStatuses.includes(status)) {
+        throw new ErrorResponse("Invalid status value", 400);
+    }
+
+    // Validate MongoDB ObjectId format
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        throw new ErrorResponse("Invalid Order ID format", 400);
+    }
+
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+        throw new ErrorResponse("Order not found", 404);
+    }
+
+    // Prevent modifications on finalized orders
+    if (order.orderStatus === "Delivered" || order.orderStatus === "Cancelled") {
+        throw new ErrorResponse(`Cannot change status. Order is already ${order.orderStatus}`, 400);
+    }
+
+    // Business rule: Must be Shipped before Delivered
+    if (status === "Delivered" && order.orderStatus !== "Shipped") {
+        throw new ErrorResponse("Order must be Shipped before marking as Delivered", 400);
+    }
+
+    // Update status and timestamp if delivered
+    order.orderStatus = status;
+    if (status === "Delivered") {
+        order.deliveredAt = Date.now();
+    }
+
+    const updatedOrder = await order.save();
+
+    res.status(200).json({
+        success: true,
+        message: `Order status updated to ${status}`,
+        data: updatedOrder
+    });
+});
+
+
+
