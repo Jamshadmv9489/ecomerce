@@ -1,12 +1,11 @@
+// src/App.jsx
+import React from "react";
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes/AppRoutes';
 
 function App() {
-  return (
-    <div className="flex items-center justify-center h-screen bg-black">
-      <h1 className="text-4xl font-bold text-blue-400">
-        ecomerce
-      </h1>
-    </div>
-  )
+  // Providing the router configuration to the application
+  return <RouterProvider router={router} />;
 }
 
 export default App
