@@ -27,6 +27,7 @@ import ManageCategories from '../pages/admin/ManageCategories';
 import ManageProducts from '../pages/admin/ManageProducts';
 import ManageUsers from '../pages/admin/ManageUsers';
 import ManageOrders from '../pages/admin/ManageOrders';
+import NotFound from '../pages/NotFound';
 
 export const router = createBrowserRouter([
   // Public Routes
@@ -96,6 +97,10 @@ export const router = createBrowserRouter([
             path: "/payment",
             element: <PaymentPage />
           },
+          {
+            path: '*',
+            element: <NotFound />
+          }
         ],
       },
     ],
@@ -129,6 +134,10 @@ export const router = createBrowserRouter([
             path: '/admin/orders',
             element: <ManageOrders />
           },
+          {
+            path: '*',
+            element: <NotFound />
+          }
         ]
       }
     ]
