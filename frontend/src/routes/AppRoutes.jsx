@@ -10,6 +10,15 @@ import Home from '../pages/user/Home';
 import Products from '../pages/user/Products';
 import ProductDetail from '../pages/user/ProductDetail';
 import Categories from '../pages/user/Categories';
+import ProtectedRoute from './ProtectedRoute';
+import UserProfile from '../pages/user/UserProfile';
+import EditProfile from '../pages/user/EditProfile';
+import Cart from '../pages/user/Cart';
+import Checkout from '../pages/user/Checkout';
+import Address from '../components/forms/Address';
+import Orders from '../pages/user/Orders';
+import OrderDetail from '../pages/user/OrderDetail';
+import PaymentPage from '../pages/user/PaymentPage';
 
 export const router = createBrowserRouter([
   // Public Routes
@@ -40,6 +49,46 @@ export const router = createBrowserRouter([
       {
         path: 'register',
         element: <Register />
+      },
+
+      
+      // Protected User Routes
+      {
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: "/profile",
+            element: <UserProfile />,
+          },
+          {
+            path: "/update-profile",
+            element: <EditProfile />,
+          },
+          {
+            path: "/cart",
+            element: <Cart />
+          },
+          {
+            path: "/checkout",
+            element: <Checkout />
+          },
+          {
+            path: "/address",
+            element: <Address />
+          },
+          {
+            path: "/orders",
+            element: <Orders />
+          },
+          {
+            path: "/orders/:orderId",
+            element: <OrderDetail />
+          },
+          {
+            path: "/payment",
+            element: <PaymentPage />
+          },
+        ],
       },
     ],
   },
