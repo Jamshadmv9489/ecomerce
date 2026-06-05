@@ -1,30 +1,55 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+
+import { useAuth } from '../../context/authContext';
+
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Package, LogIn, Menu, X, Store, Search } from 'lucide-react';
+import { ShoppingCart, Package, LogIn, Menu, X, Store, Search, LogOut } from 'lucide-react';
 
 const Navbar = () => {
+    const { user, logout } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const location = useLocation();
     const navigate = useNavigate();
 
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/login');
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
+
     // Prevent background scrolling when mobile menu is open
     useEffect(() => {
         if (isOpen) {
+            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
             document.body.style.overflow = 'hidden';
+            document.body.style.paddingRight = `${scrollbarWidth}px`;
         } else {
             document.body.style.overflow = 'unset';
+            document.body.style.paddingRight = '0px';
         }
         // Cleanup function to restore scrolling when component unmounts
-        return () => { document.body.style.overflow = 'unset'; };
+        return () => {
+            document.body.style.overflow = 'unset';
+            document.body.style.paddingRight = '0px';
+        };
     }, [isOpen]);
+
+    const authLinks = user ? [
+        { title: user.name, path: '/profile', icon: null },
+    ] : [
+        { title: 'Login', path: '/login', isButton: true, icon: LogIn },
+    ];
 
     const navLinks = [
         { title: 'Home', path: '/', icon: Store },
         { title: 'Cart', path: '/cart', icon: ShoppingCart },
         { title: 'Orders', path: '/orders', icon: Package },
-        { title: 'Login', path: '/login', isButton: true, icon: LogIn },
     ];
 
     const handleSearch = (e) => {
@@ -86,6 +111,41 @@ const Navbar = () => {
                                 </Link>
                             );
                         })}
+
+                        {authLinks.map((link) => (
+                            <Link
+                                key={link.path}
+                                to={link.path}
+                                className={link.isButton
+                                    ? "flex items-center space-x-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 rounded-lg text-sm font-semibold ml-2 shadow-md hover:shadow-indigo-500/40 transition-all"
+                                    : "flex items-center space-x-2 ml-4 p-1 pr-3 bg-slate-900 rounded-full hover:bg-slate-800 transition-colors border border-slate-700"
+                                }
+                            >
+                                {user ? (
+                                    <>
+                                        <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+                                            {user.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <span className="text-sm font-medium text-slate-200">{user.name}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <LogIn className="h-4 w-4" />
+                                        <span>{link.title}</span>
+                                    </>
+                                )}
+                            </Link>
+                        ))}
+
+                        {user && (
+                            <button
+                                onClick={handleLogout}
+                                className="flex items-center space-x-2 ml-4 p-2 px-4 bg-slate-900 rounded-full hover:bg-red-900/30 text-slate-400 hover:text-red-400 transition-colors border border-slate-700"
+                            >
+                                <LogOut className="h-4 w-4" />
+                                <span className="text-sm font-medium">Logout</span>
+                            </button>
+                        )}
                     </div>
 
                     {/* Mobile Menu Toggle Button */}
@@ -116,6 +176,34 @@ const Navbar = () => {
                                     className="w-full bg-slate-900 border border-slate-700 rounded-lg py-2.5 px-4 text-sm text-slate-100 focus:border-indigo-500 outline-none"
                                 />
                             </form>
+
+                            {/* Mobile Menu Auth Links */}
+                            {authLinks.map((link) => (
+                                <Link
+                                    key={link.path}
+                                    to={link.path}
+                                    onClick={() => setIsOpen(false)}
+                                    className={link.isButton
+                                        ? "flex items-center space-x-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 rounded-lg text-sm font-semibold ml-2 shadow-md hover:shadow-indigo-500/40 transition-all"
+                                        : "flex items-center space-x-2 ml-2 p-1 pr-3 bg-slate-900 rounded-full hover:bg-slate-800 transition-colors border border-slate-700"
+                                    }
+                                >
+                                    {user ? (
+                                        <>
+                                            <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+                                                {user.name.charAt(0).toUpperCase()}
+                                            </div>
+                                            <span className="text-sm font-medium text-slate-200">{user.name}</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <LogIn className="h-4 w-4" />
+                                            <span>{link.title}</span>
+                                        </>
+                                    )}
+                                </Link>
+                            ))}
+
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.path}
@@ -127,6 +215,17 @@ const Navbar = () => {
                                     <span>{link.title}</span>
                                 </Link>
                             ))}
+
+                            {user && (
+                                <button
+                                    onClick={() => { handleLogout(); setIsOpen(false); }}
+                                    className="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-base font-medium text-red-500 hover:bg-red-900/20 w-full"
+                                >
+                                    <LogOut className="h-5 w-5" />
+                                    <span>Logout</span>
+                                </button>
+                            )}
+
                         </div>
                     </motion.div>
                 )}

@@ -35,3 +35,26 @@ export const validateRegister = (values) => {
   return errors;
 };
 
+/**
+ * Validates login form fields.
+ * @param {Object} values - The login form state (email, password).
+ * @returns {Object} An object containing validation errors, if any.
+ */
+export const validateLogin = (values) => {
+  const errors = {};
+  const emailRegex = /\S+@\S+\.\S+/;
+
+  // Email validation
+  if (!values.email) {
+    errors.email = "Email address is required";
+  } else if (!emailRegex.test(values.email)) {
+    errors.email = "Please fill a valid email address";
+  }
+
+  // Password validation
+  if (!values.password) {
+    errors.password = "Password is required";
+  }
+
+  return errors;
+};
