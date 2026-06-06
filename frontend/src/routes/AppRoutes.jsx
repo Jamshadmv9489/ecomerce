@@ -6,7 +6,9 @@ import AdminLayout from '../layouts/AdminLayout';
 import Login from '../components/forms/Login';
 import Register from '../components/forms/Register';
 
+import PublicRoute from './PublicRoute';
 import ProtectedRoute from './ProtectedRoute';
+import AdminGuard from './adminGuard';
 import AdminRoute from './AdminRoute';
 
 import Home from '../pages/user/Home';
@@ -33,7 +35,11 @@ export const router = createBrowserRouter([
   // Public Routes
   {
     path: '/',
-    element: <UserLayout />,
+    element: (
+      <AdminGuard>
+        <UserLayout />
+      </AdminGuard>
+    ),
     children: [
       {
         index: true,
@@ -52,12 +58,18 @@ export const router = createBrowserRouter([
         element: <Categories />
       },
       {
-        path: 'login',
-        element: <Login />
-      },
-      {
-        path: 'register',
-        element: <Register />
+        element: <PublicRoute />,
+        children: [
+
+          {
+            path: 'login',
+            element: <Login />
+          },
+          {
+            path: 'register',
+            element: <Register />
+          },
+        ]
       },
 
 
