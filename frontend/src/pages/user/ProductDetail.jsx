@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate, useNavigate } from 'react-router-dom';
+
+import { useAuth } from '../../context/authContext';
 
 import { getProductBySlug } from '../../services/productService';
 
@@ -9,6 +11,10 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(null);
+
+  const navigate = useNavigate();
+
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -31,8 +37,25 @@ const ProductDetail = () => {
   if (!product) return <div>Product not found!</div>;
 
   // Quantity Handlers
-  const increment = () => setQuantity((prev) => prev + 1);
-  const decrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+  const increment = () => {
+    if (quantity < product.stock) {
+      setQuantity((prev) => prev + 1)
+    }
+  };
+  const decrement = () => {
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1))
+  };
+
+  const handleAddToCart = () => {
+    // 1. Check if the user is logged in before adding to the cart
+    if (!user) {
+      // Redirect to the login page if not authenticated:
+      navigate('/login');
+      return;
+    }
+    alert("Item added to cart successfully!");
+  };
+
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
@@ -97,9 +120,10 @@ const ProductDetail = () => {
               >
                 -
               </button>
-              <span className="px-6 font-bold text-slate-900">{quantity}</span>
+              <span className="px-6 font-bold text-slate-900">{product.stock === 0 ? 0 : quantity}</span>
               <button
                 onClick={increment}
+                disabled={quantity >= product.stock}
                 className="px-4 py-2 bg-slate-50 hover:bg-slate-100 transition cursor-pointer"
               >
                 +
@@ -108,8 +132,14 @@ const ProductDetail = () => {
           </div>
 
           {/* Add to Cart Button */}
-          <button className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition active:scale-[0.99] cursor-pointer">
-            Add {quantity} to Cart
+          <button
+            className={`w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition active:scale-[0.99] cursor-pointer 
+              ${product.stock === 0
+                ? "bg-gray-400 text-slate-500 cursor-not-allowed"
+                : "bg-slate-900 text-white hover:bg-slate-800"}`}
+            onClick={handleAddToCart}
+          >
+            {product.stock === 0 ? "Out of Stock" : `Add ${quantity} to Cart`}
           </button>
         </div>
       </div>

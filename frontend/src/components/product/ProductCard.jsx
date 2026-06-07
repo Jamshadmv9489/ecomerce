@@ -1,8 +1,13 @@
 import { useNavigate } from 'react-router-dom';
+
+import { useAuth } from '../../context/authContext';
+
 import { motion } from 'framer-motion';
 
 const ProductCard = ({ product }) => {
     const navigate = useNavigate();
+
+    const { user } = useAuth();
 
     // Navigates the user to the specific product detail page
     const handleCardClick = () => {
@@ -14,8 +19,13 @@ const ProductCard = ({ product }) => {
         // Prevents the parent card click event from triggering
         e.stopPropagation();
 
-        // TODO: Integrate with global cart context
-        console.log(`Added ${product?.name} to cart!`);
+        // 1. Check if the user is logged in before adding to the cart
+        if (!user) {
+            // Redirect to the login page if not authenticated:
+            navigate('/login');
+            return;
+        }
+        alert("Item added to cart successfully!");
     };
 
     return (
@@ -57,10 +67,14 @@ const ProductCard = ({ product }) => {
 
                     {/* Add to cart button with touch-friendly padding */}
                     <button
+                        disabled={product.stock === 0}
                         onClick={handleAddToCart}
-                        className="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-900 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-emerald-600 transition-colors cursor-pointer active:scale-95"
+                        className={`px-3 py-1.5 sm:px-4 sm:py-2 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors active:scale-95 
+        ${product.stock === 0
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-slate-900 hover:bg-emerald-600 cursor-pointer"}`}
                     >
-                        Add
+                        {product.stock === 0 ? "Out of Stock" : "Add"}
                     </button>
                 </div>
             </div>
