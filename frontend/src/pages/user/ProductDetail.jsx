@@ -1,17 +1,34 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
+import { getProductBySlug } from '../../services/productService';
+
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [mainImage, setMainImage] = useState(null);
 
-  // Dummy data: In the future, this will be replaced by API/Context data
-  const products = [
-    { id: 1, name: 'Premium Watch', price: '₹120', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500', description: 'A sleek, premium watch perfect for any occasion.' },
-    { id: 2, name: 'Running Shoes', price: '₹80', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500', description: 'High-performance running shoes designed for comfort and speed.' },
-  ];
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setLoading(true);
+      try {
+        const response = await getProductBySlug(slug);
+        setProduct(response.data);
+        setMainImage(response.data?.images?.[0]?.url);
+      } catch (err) {
+        console.error("Error fetching product:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const product = products.find((p) => p.id === parseInt(id));
+    fetchProduct();
+  }, [slug]);
+
+  if (loading) return null;
+  if (!product) return <div>Product not found!</div>;
 
   // Quantity Handlers
   const increment = () => setQuantity((prev) => prev + 1);
@@ -25,20 +42,45 @@ const ProductDetail = () => {
       </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-        {/* Product Image */}
-        <div className="bg-slate-100 rounded-2xl overflow-hidden shadow-sm">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-[400px] object-cover"
-          />
+        <div className="flex flex-col gap-4">
+
+          {/* Main Image */}
+          <div
+            className="bg-slate-100 rounded-2xl overflow-hidden shadow-sm w-full"
+            style={{ aspectRatio: "1/1" }}
+          >
+            <img
+              src={mainImage || 'default-image.jpg'}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Thumbnails */}
+          <div className="grid grid-cols-4 gap-2 sm:gap-4">
+            {product?.images?.map((img, index) => (
+              <button
+                key={index}
+                onClick={() => setMainImage(img.url)}
+                className={`border-2 rounded-lg overflow-hidden transition-all cursor-pointer hover:scale-105 hover:border-slate-400 ${mainImage === img.url ? 'border-blue-600' : 'border-transparent'
+                  }`}
+                style={{ aspectRatio: "1/1" }}
+              >
+                <img
+                  src={img.url}
+                  alt={`Thumbnail ${index}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Product Info */}
         <div className="space-y-6">
           <div>
             <h1 className="text-4xl font-bold text-slate-900">{product.name}</h1>
-            <p className="text-3xl font-bold text-blue-600 mt-2">{product.price}</p>
+            <p className="text-3xl font-bold text-blue-600 mt-2">₹{product.price}</p>
           </div>
 
           <p className="text-slate-600 leading-relaxed text-lg">

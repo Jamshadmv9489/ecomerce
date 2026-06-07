@@ -6,7 +6,7 @@ const ProductCard = ({ product }) => {
 
     // Navigates the user to the specific product detail page
     const handleCardClick = () => {
-        navigate(`/product-detail/${product.id}`);
+        navigate(`/product-detail/${product.slug}`);
     };
 
     // Handles adding the item to the user's cart
@@ -15,7 +15,7 @@ const ProductCard = ({ product }) => {
         e.stopPropagation();
 
         // TODO: Integrate with global cart context
-        console.log(`Added ${product.name} to cart!`);
+        console.log(`Added ${product?.name} to cart!`);
     };
 
     return (
@@ -33,14 +33,14 @@ const ProductCard = ({ product }) => {
             onClick={handleCardClick}
             role="button"
             tabIndex={0}
-            aria-label={`View details for ${product.name}`}
+            aria-label={`View details for ${product?.name}`}
         >
             {/* Product Image Display with responsive height */}
-            <div className="h-40 sm:h-48 md:h-56 bg-slate-100 overflow-hidden">
+            <div className="w-full aspect-square bg-slate-100 overflow-hidden relative">
                 <img
-                    src={product.image || '/placeholder.png'}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                    src={product?.images?.[0]?.url || 'default-image.jpg'}
+                    alt={product?.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 />
             </div>
 
@@ -52,7 +52,7 @@ const ProductCard = ({ product }) => {
 
                 <div className="flex items-center justify-between mt-3 sm:mt-4">
                     <span className="text-lg sm:text-xl font-bold text-blue-600">
-                        ₹{product.price}
+                        ₹{product?.price}
                     </span>
 
                     {/* Add to cart button with touch-friendly padding */}
