@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, Navigate, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/authContext';
+import { useCart } from '../../context/CartContext';
 
 import { getProductBySlug } from '../../services/productService';
 
@@ -15,6 +16,7 @@ const ProductDetail = () => {
   const navigate = useNavigate();
 
   const { user } = useAuth();
+  const {addToCart} = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -46,14 +48,22 @@ const ProductDetail = () => {
     setQuantity((prev) => (prev > 1 ? prev - 1 : 1))
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     // 1. Check if the user is logged in before adding to the cart
     if (!user) {
       // Redirect to the login page if not authenticated:
       navigate('/login');
       return;
     }
-    alert("Item added to cart successfully!");
+
+    try {
+      await addToCart(product._id, quantity); // Pass product ID and quantity
+
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add item. Please try again.");
+
+    }
   };
 
 
