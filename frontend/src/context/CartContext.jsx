@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { addToItem } from '../services/cartSerivce';
 // Import your service functions here
 
 const CartContext = createContext(null);
@@ -25,11 +26,16 @@ export const CartProvider = ({ children }) => {
 
     // Add a new item to the cart
     const addToCart = async (productId, quantity) => {
+        setLoading(true);
         try {
             // Call API to add item, then refresh cart
+            await addToItem(productId, quantity);
             fetchCart();
+            console.log("Item added successfully");
         } catch (err) {
             console.error("Failed to add to cart", err);
+        } finally {
+            setLoading(false);
         }
     };
 

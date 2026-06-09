@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/authContext';
+import { useCart } from '../../context/CartContext';
 
 import { motion } from 'framer-motion';
 
@@ -8,6 +9,7 @@ const ProductCard = ({ product }) => {
     const navigate = useNavigate();
 
     const { user } = useAuth();
+    const { addToCart } = useCart();
 
     // Navigates the user to the specific product detail page
     const handleCardClick = () => {
@@ -15,7 +17,7 @@ const ProductCard = ({ product }) => {
     };
 
     // Handles adding the item to the user's cart
-    const handleAddToCart = (e) => {
+    const handleAddToCart = async (e) => {
         // Prevents the parent card click event from triggering
         e.stopPropagation();
 
@@ -25,7 +27,13 @@ const ProductCard = ({ product }) => {
             navigate('/login');
             return;
         }
-        alert("Item added to cart successfully!");
+
+        try {
+            await addToCart(product._id); // Pass product ID and quantity
+        } catch (error) {
+            console.error("Error adding to cart:", error);
+            alert("Failed to add item. Please try again.");
+        }
     };
 
     return (
