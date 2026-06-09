@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { addToItem } from '../services/cartSerivce';
+import { addToItem, getCart, removeFromCart, updateCartQuantity } from '../services/cartSerivce';
 // Import your service functions here
 
 const CartContext = createContext(null);
@@ -15,7 +15,11 @@ export const CartProvider = ({ children }) => {
         setError(null);
         try {
             // Call API to get cart items
+            const response = await getCart();
+            setCartItems(response);
             console.log("Cart fetched successfully");
+            console.log(response);
+
         } catch (err) {
             setError("Failed to fetch cart");
             console.error(err);
@@ -41,23 +45,28 @@ export const CartProvider = ({ children }) => {
 
     // Update the quantity of an existing item
     const updateQuantity = async (productId, quantity) => {
+        setLoading(true);
         try {
-            // Optimistically update UI state
-            setCartItems(prev => prev.map(item =>
-                item.productId === productId ? { ...item, quantity } : item
-            ));
+            const response = await updateCartQuantity(productId, quantity);
+            setCartItems(response.data);
+
         } catch (err) {
             console.error("Failed to update quantity", err);
+        } finally {
+            setLoading(false);
         }
     };
 
     // Remove an item from the cart
     const removeItem = async (productId) => {
+        setLoading(true);
         try {
-            // Filter out the removed item from state
-            setCartItems(prev => prev.filter(item => item.productId !== productId));
+            const response = await removeFromCart(productId);
+            setCartItems(response.data);
         } catch (err) {
             console.error("Failed to remove item", err);
+        } finally {
+            setLoading(false);
         }
     };
 
