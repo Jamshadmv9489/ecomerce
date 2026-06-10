@@ -1,7 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 import { useCart } from "../../context/CartContext";
 
 const Cart = () => {
-  // Initial dummy state for cart items
+
+  const navigate = useNavigate();
+
+  // Initial state for cart items
   const { cartItems, updateQuantity, removeItem } = useCart();
 
 
@@ -30,7 +35,7 @@ const Cart = () => {
                 {/* Quantity Controller */}
                 <div className="flex items-center border border-slate-300 rounded-lg overflow-hidden">
                   <button
-                    onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
+                    onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
                     className="px-4 py-2 bg-slate-50 hover:bg-slate-100 transition"
                   >
                     -
@@ -69,7 +74,9 @@ const Cart = () => {
               <span className="text-2xl font-bold text-blue-600">₹{total.toLocaleString()}</span>
             </div>
           </div>
-          <button className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition shadow-lg active:scale-95">
+          <button
+            onClick={() => navigate('/address')}
+            className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition shadow-lg active:scale-95">
             Proceed to Checkout
           </button>
         </div>

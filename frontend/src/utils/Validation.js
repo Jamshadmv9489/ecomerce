@@ -58,3 +58,23 @@ export const validateLogin = (values) => {
 
   return errors;
 };
+
+
+
+// Shipping Address
+export const validateShippingAddress = (values) => {
+    let errors = {};
+
+    if (!values.street.trim()) errors.street = "Street address is required";
+    if (!values.city.trim()) errors.city = "City is required";
+    if (!values.state.trim()) errors.state = "State is required";
+    if (!values.postalCode.trim()) errors.postalCode = "Postal code is required";
+    if (!values.country.trim()) errors.country = "Country is required";
+    if (!values.phone.trim()) {
+        errors.phone = "Phone number is required";
+    } else if (!/^\d{10}$/.test(values.phone)) {
+        errors.phone = "Phone number must be 10 digits";
+    }
+
+    return errors;
+};
