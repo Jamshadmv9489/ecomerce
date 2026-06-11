@@ -11,3 +11,12 @@ export const createOrder = async (orderData) => {
         throw error.response?.data || error.message;
     }
 };
+
+export const getMyOrders = async () => {
+    try {
+        const response = await api.get(`${ORDER_BASE}/myorders`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
