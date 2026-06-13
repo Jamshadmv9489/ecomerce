@@ -14,3 +14,19 @@ export const getCategories = async () => {
         throw error.response?.data || error.message;
     }
 };
+
+
+/**
+ * Create a new category
+ */
+export const createCategory = async (formData) => {
+    try {
+        // FormData is required for image uploads
+        const response = await api.post(`${CATEGORY_BASE}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
