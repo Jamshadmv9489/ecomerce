@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { CreatevalidateCategory } from "../../utils/categoryValidation";
+import { categoryValidator } from "../../utils/categoryValidation";
 import { useForm } from "../../hooks/useForm";
 
 import Modal from "../common/Modal";
@@ -8,14 +8,28 @@ import Input from "../common/Input";
 import ImageUpload from "../common/ImageUpload";
 import Button from "../common/Button";
 
-const CategoryModal = ({ isOpen, onClose, onSave, loading }) => {
-    const { values, errors, setErrors, setValues, handleChange } = useForm({
+const CategoryModal = ({ isOpen, onClose, onSave, loading, initialData }) => {
+    const { values, errors, setErrors, setValues, handleChange, resetForm } = useForm({
         name: "",
         description: "",
         image: null
     });
 
     const [preview, setPreview] = useState(null);
+
+useEffect(() => {
+    if (isOpen && initialData) {
+        setValues({
+            name: initialData.name || "",
+            description: initialData.description || "",
+            image: null
+        });
+        setPreview(initialData?.image?.url || null);
+    } else if (isOpen && !initialData) {
+        resetForm();
+        setPreview(null);
+    }
+}, [isOpen, initialData]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -30,7 +44,7 @@ const CategoryModal = ({ isOpen, onClose, onSave, loading }) => {
         e.preventDefault();
 
         // Validate form fields
-        const validationErrors = CreatevalidateCategory(values);
+        const validationErrors = categoryValidator(values);
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);

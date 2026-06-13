@@ -30,3 +30,18 @@ export const createCategory = async (formData) => {
         throw error.response?.data || error.message;
     }
 };
+
+/**
+ * Update category
+ */
+export const updateCategory = async (slug, formData) => {
+    try {
+        // FormData is required for image uploads
+        const response = await api.put(`${CATEGORY_BASE}/${slug}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};

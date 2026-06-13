@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useCategory } from "../../context/CategoryContext";
-import { createCategory } from "../../services/categoryService";
+import { createCategory, updateCategory } from "../../services/categoryService";
 
 import DataTable from "../../components/admin/DataTable";
 import Button from "../../components/common/Button";
@@ -8,9 +8,9 @@ import CategoryModal from "../../components/admin/CategoryModal";
 
 const ManageCategories = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
 
   const { fetchCategories, categories, loading, setLoading } = useCategory();
-  console.log("Categories data:", categories);
 
   const columns = [
     { header: 'ID', accessor: '_id' },
@@ -18,25 +18,44 @@ const ManageCategories = () => {
     { header: 'Category Name', accessor: 'name' }
   ];
 
+  const handleEdit = (slug) => {
+    const categoryToEdit = categories.find((cat) => cat.slug === slug);
+
+    if (categoryToEdit) {
+      console.log("Found category:", categoryToEdit);
+      setEditingCategory(categoryToEdit);
+      setIsModalOpen(true);
+    } else {
+      console.error("Category not found with slug:", slug);
+    }
+  };
+
   const handleSave = async (data) => {
     setLoading(true);
     try {
-      const response = await createCategory(data);
-
-      if (response?.success) {
-        setIsModalOpen(false);
-        alert("Category created successfully!");
-        await fetchCategories();
+      if (editingCategory) {
+        const response = await updateCategory(editingCategory.slug, data);
+        if (response?.success) {
+          setIsModalOpen(false);
+          alert("Category updated successfully!");
+          await fetchCategories();
+        }
       } else {
-        alert(response?.message || "Failed to create category.");
-      }
 
+        const response = await createCategory(data);
+        if (response?.success) {
+          setIsModalOpen(false);
+          alert("Category created successfully!");
+          await fetchCategories();
+        }
+      }
     } catch (err) {
       const errorMessage = err?.message || "Failed to create category. Please try again.";
       console.error("Error creating category:", err);
       alert(errorMessage);
     } finally {
       setLoading(false);
+      setEditingCategory(null);
     }
   };
 
@@ -54,15 +73,16 @@ const ManageCategories = () => {
 
       <CategoryModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => { setIsModalOpen(false); setEditingCategory(null); }}
         onSave={handleSave}
         loading={loading}
+        initialData={editingCategory}
       />
 
       <DataTable
         columns={columns}
         data={categories}
-        onEdit={(slug) => console.log("Editing", slug)}
+        onEdit={handleEdit}
         onDelete={(slug) => console.log("Deleting", slug)}
       />
     </div>

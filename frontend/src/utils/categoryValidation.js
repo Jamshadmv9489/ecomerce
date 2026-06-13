@@ -1,4 +1,4 @@
-export const validateCategory = (values) => {
+export const categoryValidator = (values) => {
     let errors = {};
 
     // Name validation
