@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useCategory } from "../../context/CategoryContext";
-import { createCategory, updateCategory } from "../../services/categoryService";
+import { createCategory, deleteCategory, updateCategory } from "../../services/categoryService";
 
 import DataTable from "../../components/admin/DataTable";
 import Button from "../../components/common/Button";
@@ -59,6 +59,19 @@ const ManageCategories = () => {
     }
   };
 
+
+  const handleDelete = async (slug) => {
+    if (window.confirm("Are you sure you want to delete this category?")) {
+      try {
+        await deleteCategory(slug);
+        alert("Category deleted successfully!");
+        await fetchCategories();
+      } catch (err) {
+        alert(err?.message || "Failed to delete category.");
+      }
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -83,7 +96,7 @@ const ManageCategories = () => {
         columns={columns}
         data={categories}
         onEdit={handleEdit}
-        onDelete={(slug) => console.log("Deleting", slug)}
+        onDelete={handleDelete}
       />
     </div>
   )
