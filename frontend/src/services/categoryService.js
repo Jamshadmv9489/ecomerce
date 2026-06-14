@@ -45,3 +45,16 @@ export const updateCategory = async (slug, formData) => {
         throw error.response?.data || error.message;
     }
 };
+
+/**
+ * Delete category
+ */
+export const deleteCategory = async (slug) => {
+    try {
+        // FormData is required for image uploads
+        const response = await api.delete(`${CATEGORY_BASE}/${slug}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
