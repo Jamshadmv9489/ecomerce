@@ -22,3 +22,33 @@ export const getProductBySlug = async (slug) => {
         throw error.response?.data || error.message;
     }
 };
+
+/**
+ * Create a new Product
+ */
+export const createProduct = async (formData) => {
+    try {
+        // FormData is required for image uploads
+        const response = await api.post(`${PRODUCT_BASE}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+/**
+ * Update product
+ */
+export const updateProduct = async (slug, formData) => {
+    try {
+        // FormData is required for image uploads
+        const response = await api.put(`${PRODUCT_BASE}/${slug}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
