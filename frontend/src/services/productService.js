@@ -52,3 +52,16 @@ export const updateProduct = async (slug, formData) => {
         throw error.response?.data || error.message;
     }
 };
+
+/**
+ * Delete Product
+ */
+export const deleteProduct = async (slug) => {
+    try {
+        // FormData is required for image uploads
+        const response = await api.delete(`${PRODUCT_BASE}/${slug}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};

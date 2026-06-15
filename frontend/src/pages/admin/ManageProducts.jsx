@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { useProducts } from "../../context/ProductContext";
-import { createProduct, updateProduct } from "../../services/productService";
+import { createProduct, deleteProduct, updateProduct } from "../../services/productService";
 
 import Button from "../../components/common/Button";
 import DataTable from "../../components/admin/DataTable";
@@ -32,8 +32,16 @@ const ManageProducts = () => {
     }
   };
 
-  const handleDelete = async () => {
-    console.log("Deleting");
+  const handleDelete = async (slug) => {
+     if (window.confirm("Are you sure you want to delete this Product?")) {
+          try {
+            await deleteProduct(slug);
+            alert("product deleted successfully!");
+            await fetchProducts();
+          } catch (err) {
+            alert(err?.message || "Failed to delete product.");
+          }
+        }
 
   };
 
