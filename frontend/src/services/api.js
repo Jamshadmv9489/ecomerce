@@ -6,7 +6,7 @@ import axios from 'axios';
  */
 const api = axios.create({
     // Backend API base URL (defaults to localhost:5000 if env is missing)
-    baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
+    baseURL: import.meta.env.VITE_API_BASE_URL,
     timeout: 10000,
     // Required to allow the browser to send/receive HTTP-Only cookies
     withCredentials: true,
