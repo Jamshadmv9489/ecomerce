@@ -55,7 +55,7 @@ const Checkout = () => {
                 orderId: myOrderId,
               });
               alert("Payment Successful!");
-              navigate('/order-success');
+              navigate('/orders');
             } catch (err) {
               console.error("Verification error:", err);
               alert("Verification Failed");
@@ -70,7 +70,7 @@ const Checkout = () => {
         new window.Razorpay(options).open();
       } else {
         // Handle COD flow
-        navigate('/order-success');
+        navigate('/orders');
         setLoading(false);
       }
     } catch (err) {
