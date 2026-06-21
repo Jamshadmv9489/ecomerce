@@ -37,9 +37,9 @@ const Login = () => {
     try {
       // Call the API function
       await login(values);
-      
+
       const user = await checkAuth();
-  
+
       // Redirect based on role
       if (user?.role === 'admin') {
         navigate('/admin');
@@ -50,7 +50,10 @@ const Login = () => {
       console.log("Login Successfull");
 
     } catch (error) {
-      console.error("Authentication failed:", error);
+      const errorMessage = error?.message || "Something went wrong. Please try again.";
+      setErrors({ general: errorMessage });
+      console.log("login:", error);
+
     } finally {
       setIsLoading(false);
     }
@@ -62,6 +65,14 @@ const Login = () => {
       subtitle="Login to your account to continue"
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+
+        {/* general error */}
+        {errors?.general && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm font-medium flex items-center">
+            <span className="mr-2">⚠️</span> {errors.general}
+          </div>
+        )}
+
         <Input
           label="Email Address"
           type="email"
