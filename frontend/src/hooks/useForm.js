@@ -12,11 +12,8 @@ export const useForm = (initialValues) => {
             [name]: value,
         }));
 
-        if (errors[name]) {
-            setErrors((prev) => ({
-                ...prev,
-                [name]: "",
-            }));
+        if (Object.keys(errors).length > 0) {
+            setErrors({});
         }
     };
 

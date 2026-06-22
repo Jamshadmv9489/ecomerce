@@ -23,9 +23,6 @@ const ManageUsers = () => {
   useEffect(() => {
     loadUsers();
   }, []);
-
-  if (loading) return <div className="p-6 text-center">Loading users...</div>;
-
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Manage Users</h2>

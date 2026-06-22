@@ -31,6 +31,11 @@ import ManageUsers from '../pages/admin/ManageUsers';
 import ManageOrders from '../pages/admin/ManageOrders';
 import NotFound from '../pages/NotFound';
 
+const rootLoader = async () => {
+  await new Promise(resolve => setTimeout(resolve, 500));
+  return null;
+};
+
 export const router = createBrowserRouter([
   // Public Routes
   {
@@ -43,19 +48,26 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />
+        element: <Home />,
+        loader: rootLoader,
+
       },
       {
         path: 'products',
-        element: <Products />
+        element: <Products />,
+        loader: rootLoader,
       },
       {
         path: 'product-detail/:slug',
-        element: <ProductDetail />
+        element: <ProductDetail />,
+        loader: rootLoader,
+
       },
       {
         path: 'categories',
-        element: <Categories />
+        element: <Categories />,
+        loader: rootLoader,
+
       },
       {
         element: <PublicRoute />,
@@ -63,11 +75,15 @@ export const router = createBrowserRouter([
 
           {
             path: 'login',
-            element: <Login />
+            element: <Login />,
+            loader: rootLoader,
+
           },
           {
             path: 'register',
-            element: <Register />
+            element: <Register />,
+            loader: rootLoader,
+
           },
         ]
       },
@@ -80,38 +96,56 @@ export const router = createBrowserRouter([
           {
             path: "/profile",
             element: <UserProfile />,
+            loader: rootLoader,
+
           },
           {
             path: "/update-profile",
             element: <EditProfile />,
+            loader: rootLoader,
+
           },
           {
             path: "/cart",
-            element: <Cart />
+            element: <Cart />,
+            loader: rootLoader,
+
           },
           {
             path: "/checkout",
-            element: <Checkout />
+            element: <Checkout />,
+            loader: rootLoader,
+
           },
           {
             path: "/address",
-            element: <Address />
+            element: <Address />,
+            loader: rootLoader,
+
           },
           {
             path: "/orders",
-            element: <Orders />
+            element: <Orders />,
+            loader: rootLoader,
+
           },
           {
             path: "/orders/:orderId",
-            element: <OrderDetail />
+            element: <OrderDetail />,
+            loader: rootLoader,
+
           },
           {
             path: "/payment",
-            element: <PaymentPage />
+            element: <PaymentPage />,
+            loader: rootLoader,
+
           },
           {
             path: '*',
-            element: <NotFound />
+            element: <NotFound />,
+            loader: rootLoader,
+
           }
         ],
       },
@@ -125,30 +159,37 @@ export const router = createBrowserRouter([
       {
         path: "/admin",
         element: <AdminLayout />,
+        loader: rootLoader,
         children: [
           {
             index: true,
-            element: <Dashboard />
+            element: <Dashboard />,
+            loader: rootLoader,
           },
           {
-            path: '/admin/categories',
-            element: <ManageCategories />
+            path: 'categories',
+            element: <ManageCategories />,
+            loader: rootLoader,
           },
           {
-            path: '/admin/products',
-            element: <ManageProducts />
+            path: 'products',
+            element: <ManageProducts />,
+            loader: rootLoader,
           },
           {
-            path: '/admin/users',
-            element: <ManageUsers />
+            path: 'users',
+            element: <ManageUsers />,
+            loader: rootLoader,
           },
           {
-            path: '/admin/orders',
-            element: <ManageOrders />
+            path: 'orders',
+            element: <ManageOrders />,
+            loader: rootLoader,
           },
           {
             path: '*',
-            element: <NotFound />
+            element: <NotFound />,
+            loader: rootLoader,
           }
         ]
       }

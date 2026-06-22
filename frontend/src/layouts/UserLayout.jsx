@@ -1,7 +1,8 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigation } from 'react-router-dom';
 
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
+import Loader from '../components/common/Loader';
 
 /**
  * UserLayout Component
@@ -11,6 +12,7 @@ import Footer from '../components/common/Footer';
  * stays at the bottom of the viewport even when content is minimal.
  */
 const UserLayout = () => {
+  const navigation = useNavigation();
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900">
 
@@ -19,10 +21,15 @@ const UserLayout = () => {
         <Navbar />
       </header>
 
-      {/* Main content area where child routes are injected */}
-      {/* flex-grow ensures this section occupies all available vertical space */}
-      <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <Outlet />
+      <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative min-h-[calc(100vh-140px)] flex flex-col">
+        {navigation.state === "loading" ? (
+          <Loader />
+        ) : (
+          <div className="flex-grow">
+            <Outlet />
+          </div>
+        )}
+
       </main>
 
       {/* Persistent footer displayed at the bottom of the layout */}
